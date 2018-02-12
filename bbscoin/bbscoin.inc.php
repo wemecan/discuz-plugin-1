@@ -134,7 +134,7 @@ if(submitcheck('addfundssubmit')){
         showmessage(lang('plugin/bbscoin', 'pay_lang_s5'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    $real_price = $amount * 100000000 - 1000000;
+    $real_price = $amount * 100000000 - 50000000;
 
     if ($real_price <= 0) {
         showmessage(lang('plugin/bbscoin', 'pay_lang_s12'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
@@ -163,8 +163,8 @@ if(submitcheck('addfundssubmit')){
 
     $req_data = array(
       'params' => array(
-          'anonymity' => 0,
-          'fee' => 1000000,
+          'anonymity' => 5,
+          'fee' => 50000000,
           'unlockTime' => 0,
           'changeAddress' => $config['bbscoin_wallet_address'],
           "transfers" => array(
