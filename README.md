@@ -1,4 +1,3 @@
 # BBSCoin Plugin for Discuz!
 
-You can install the plugins from AddOn Center 
-http://addon.discuz.com/?@bbscoin.plugin
+Extract to source\plugin folder, then go to the Admin CP install the plugin.
