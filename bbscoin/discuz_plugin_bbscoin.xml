@@ -14,7 +14,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[bbscoin/]]></item>
 			<item id="copyright"><![CDATA[BBSCoin]]></item>
-			<item id="version"><![CDATA[1.1.2]]></item>
+			<item id="version"><![CDATA[1.2.0]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[admincp]]></item>
@@ -93,7 +93,7 @@
 			</item>
 			<item id="5">
 				<item id="displayorder"><![CDATA[0]]></item>
-				<item id="title"><![CDATA[Walletd 服务地址]]></item>
+				<item id="title"><![CDATA[Walletd或在线钱包服务地址]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[bbscoin_walletd]]></item>
 				<item id="type"><![CDATA[text]]></item>
@@ -107,6 +107,24 @@
 				<item id="variable"><![CDATA[confirmed_blocks]]></item>
 				<item id="type"><![CDATA[number]]></item>
 				<item id="value"><![CDATA[3]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="7">
+				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="title"><![CDATA[在线钱包站点ID(使用在线钱包时填写)]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[bbscoin_siteid]]></item>
+				<item id="type"><![CDATA[text]]></item>
+				<item id="value"><![CDATA[]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="8">
+				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="title"><![CDATA[在线钱包站点Key(使用在线钱包时填写)]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[bbscoin_sitekey]]></item>
+				<item id="type"><![CDATA[text]]></item>
+				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
