@@ -1,22 +1,13 @@
 <?php
-
 if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
 
-if(!$_G['uid']) {
-	showmessage('not_loggedin', NULL, array(), array('login' => 1));
-}
+require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi.php';
+require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi_partner.php';
+
 global $_G;
 
-function _config() {
-	global $_G;
-    if (!isset($_G['cache']['plugin'])) {
-        loadcache('plugin');
-    }
-    $config = $_G['cache']['plugin']['bbscoin'];
-	return $config;		
-}
 $config = _config();
 
 if (!$config['bbscoin_wallet_address']) {
@@ -25,259 +16,20 @@ if (!$config['bbscoin_wallet_address']) {
 
 
 if ($config['bbscoin_siteid'] && $config['bbscoin_sitekey']) {
-    BBSCoinApi::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey']);
+    BBSCoinApiWebWallet::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey']);
+    BBSCoinApiWebWallet::recvCallback();
+    require_once DISCUZ_ROOT.'./source/plugin/bbscoin/webwallet.inc.php';
+} else {
+    require_once DISCUZ_ROOT.'./source/plugin/bbscoin/walletd.inc.php';
 }
 
-//提交表单
-if(submitcheck('addfundssubmit')){
 
-    $amount = $_POST['addfundamount'];
-
-    if($amount < 1) {
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s1').'1');
+function _config() {
+	global $_G;
+    if (!isset($_G['cache']['plugin'])) {
+        loadcache('plugin');
     }
-
-    $orderid = dgmdate(TIMESTAMP, 'YmdHis').random(3);
-    $transaction_hash = trim($_POST['transactionhash']);
-
-    if(discuz_process::islocked('pay_bbscoin_'.$_G['uid'], 10)) {
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s4'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    $transaction_info = C::t('#bbscoin#common_bbscoin')->fetch_by_transaction_hash($transaction_hash);
-
-    if($transaction_info['transaction_hash']) {
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s3'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    $need_bbscoin = ceil((($amount / $config['pay_ratio']) * 100)) / 100;
-
-    if(!$orderinfo) {
-        $orderinfo = array(
-        	'orderid' => $orderid,
-        	'status' => '1',
-        	'uid' => $_G['uid'],
-        	'amount' => $amount,
-        	'price' => $need_bbscoin,
-        	'submitdate' => $_G['timestamp'],
-        );
-        C::t('forum_order')->insert($orderinfo);
-    }
-
-    $rsp_data = BBSCoinApi::getTransaction($config['bbscoin_walletd'], $transaction_hash);
-    $status_rsp_data = BBSCoinApi::getStatus($config['bbscoin_walletd']);
-
-    $blockCount = $status_rsp_data['result']['blockCount'];
-    $transactionBlockIndex = $rsp_data['result']['transaction']['blockIndex'];
-    $confirmed = $blockCount - $transactionBlockIndex + 1;
-    if ($blockCount <= 0 || $transactionBlockIndex <= 0 || $confirmed <= $config['confirmed_blocks']) {
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s13').$config['confirmed_blocks'], '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    $trans_amount = 0;
-    if ($rsp_data['result']['transaction']['transfers']) {
-        foreach ($rsp_data['result']['transaction']['transfers'] as $transfer_item) {
-            if ($transfer_item['address'] == $config['bbscoin_wallet_address']) {
-                $trans_amount += $transfer_item['amount'];
-            }
-        }
-    }
-
-    $trans_amount = $trans_amount / 100000000;
-
-    if ($trans_amount == $need_bbscoin) {
-    	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
-        C::t('#bbscoin#common_bbscoin')->insert(
-            array(
-                'orderid' => $orderid,
-                'transaction_hash' => $transaction_hash,
-                'address' => '',
-                'dateline' => $_G['timestamp'],
-            )
-        );
-    	updatemembercount($_G['uid'], array($config['pay_credit'] => $orderinfo['amount']), 1, 'AFD', $_G['uid']);
-
-    	notification_add($_G['uid'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s9'), 'message' => lang('plugin/bbscoin', 'pay_lang_s8').$orderid, 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
-
-        echo  "<script language=\"javascript\" type=\"text/javascript\">window.location.href='".$_G['siteurl']."forum.php?mod=misc&action=paysucceed'</script>";
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-    } else {
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s2'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    exit();
-} elseif(submitcheck('addcoinssubmit') && $config['pay_to_bbscoin']){
-    $amount = $_POST['addcoinamount'];
-    $need_point = ceil((($amount / $config['pay_to_coin_ratio']) * 100)) / 100;
-
-    if ($need_point < 1) {
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s1').'1');
-    }
-
-    $walletaddress = trim($_POST['walletaddress']);
-
-    if ($config['bbscoin_wallet_address'] == $walletaddress) {
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s5'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    $real_price = $amount * 100000000 - 50000000;
-
-    if ($real_price <= 0) {
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s12'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    if(discuz_process::islocked('pay_bbscoin_'.$_G['uid'], 10)) {
-    	showmessage(lang('plugin/bbscoin', 'pay_lang_s4'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    if ($need_point > getuserprofile('extcredits'.$config['pay_credit'])) {
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s10'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    $orderid = dgmdate(TIMESTAMP, 'YmdHis').random(3);
-
-    $orderinfo = array(
-    	'orderid' => $orderid,
-    	'status' => '1',
-    	'uid' => $_G['uid'],
-    	'amount' => $need_point,
-    	'price' => $amount,
-    	'submitdate' => $_G['timestamp'],
-    );
-    C::t('forum_order')->insert($orderinfo);
-
-    $rsp_data = BBSCoinApi::sendTransaction($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress);
-
-    $trans_amount = 0;
-    if ($rsp_data['result']['transactionHash']) {
-    	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
-        C::t('#bbscoin#common_bbscoin')->insert(
-            array(
-                'orderid' => $orderid,
-                'transaction_hash' => $rsp_data['result']['transactionHash'],
-                'address' => $walletaddress,
-                'dateline' => $_G['timestamp'],
-            )
-        );
-    	updatemembercount($_G['uid'], array($config['pay_credit'] => -$need_point), 1, 'AFD', $_G['uid']);
-
-    	notification_add($_G['uid'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s7'), 'message' => lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['result']['transactionHash'], 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
-
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['result']['transactionHash'], '', array(), array('alert' => 'right', 'showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    } else {
-        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s5'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
-    }
-
-    exit();
-
-}
-
-class BBSCoinApi {
-
-    private static $online_api_site_id  = '';
-    private static $online_api_site_key = '';
-
-    // Set Site Info
-    public static function setSiteInfo($site_id, $site_key) {
-        self::$online_api_site_id = $site_id;
-        self::$online_api_site_key = $site_key;
-    }
-
-    // Send Request
-    public static function getUrlContent($url, $data_string) {
-        $ch = curl_init();
-
-        if (self::$online_api_site_id && self::$online_api_site_key) {
-            $sign = self::sign($data_string);
-            $url_suff = 'site_id='.self::$online_api_site_id.'&sign='.$sign['sign'].'&ts='.$sign['ts'];
-            if (strpos($url, '?') === false) {
-                $url .= '?'.$url_suff;
-            } else {
-                $url .= '&'.$url_suff;
-            }
-        }
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'BBSCoin');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        $data = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        return $data;
-    }
-
-    // Generate Sign
-    public static function sign($data_string) {
-        $ts = time();
-        $sign = hash_hmac('sha256', $data_string.$ts, self::$online_api_site_key);
-        return array(
-            'sign' => $sign,
-            'ts' => $ts
-        );
-    }
-
-    // Send Transaction
-    public static function sendTransaction($walletd, $address, $real_price, $sendto) {
-        $req_data = array(
-          'params' => array(
-              'anonymity' => 0,
-              'fee' => 50000000,
-              'unlockTime' => 0,
-              'changeAddress' => $address,
-              "transfers" => array(
-               0 => array(
-                    'amount' => $real_price,
-                    'address' => $sendto,
-                )
-              )
-          ),
-          "jsonrpc" => "2.0",
-          "method" => "sendTransaction"
-        );
-
-        $result = self::getUrlContent($walletd, json_encode($req_data)); 
-        $rsp_data = json_decode($result, true);
-        
-        return $rsp_data;
-    }
-
-    // Get Status
-    public static function getStatus($walletd) {
-        $status_req_data = array(
-          "jsonrpc" => "2.0",
-          "method" => "getStatus"
-        );
-
-        $result = self::getUrlContent($walletd, json_encode($status_req_data)); 
-        $status_rsp_data = json_decode($result, true);
-        return $status_rsp_data;
-    }
-
-    // Get Transaction
-    public static function getTransaction($walletd, $transaction_hash) {
-        $req_data = array(
-          "params" => array(
-          	"transactionHash" => $transaction_hash
-          ),
-          "jsonrpc" => "2.0",
-          "method" => "getTransaction"
-        );
-
-        $result = self::getUrlContent($walletd, json_encode($req_data)); 
-        $rsp_data = json_decode($result, true);
-
-        return $rsp_data;
-    }
-
+    $config = $_G['cache']['plugin']['bbscoin'];
+	return $config;		
 }
 

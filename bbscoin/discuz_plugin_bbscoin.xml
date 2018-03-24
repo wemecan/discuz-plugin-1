@@ -14,7 +14,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[bbscoin/]]></item>
 			<item id="copyright"><![CDATA[BBSCoin]]></item>
-			<item id="version"><![CDATA[1.2.0]]></item>
+			<item id="version"><![CDATA[2.0.0]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[admincp]]></item>
@@ -106,7 +106,7 @@
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[confirmed_blocks]]></item>
 				<item id="type"><![CDATA[number]]></item>
-				<item id="value"><![CDATA[3]]></item>
+				<item id="value"><![CDATA[1]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="7">
@@ -127,11 +127,20 @@
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
+			<item id="9">
+				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="title"><![CDATA[提现手续费(单位：BBS)]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[withdraw_fee]]></item>
+				<item id="type"><![CDATA[number]]></item>
+				<item id="value"><![CDATA[1]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
 		</item>
 		<item id="language">
 			<item id="scriptlang">
 				<item id="pay_lang_s1"><![CDATA[每次操作涉及的交易积分的不能少于：]]></item>
-				<item id="pay_lang_s2"><![CDATA[充值金额错误]]></item>
+				<item id="pay_lang_s2"><![CDATA[充值 Payment ID 错误]]></item>
 				<item id="pay_lang_s3"><![CDATA[交易已处理，请勿重复操作]]></item>
 				<item id="pay_lang_s4"><![CDATA[请勿频繁操作]]></item>
 				<item id="pay_lang_s5"><![CDATA[提现操作失败]]></item>
@@ -143,6 +152,10 @@
 				<item id="pay_lang_s11"><![CDATA[站长未设置钱包地址]]></item>
 				<item id="pay_lang_s12"><![CDATA[扣除手续费后提现BBSCoin小于0，无法继续]]></item>
 				<item id="pay_lang_s13"><![CDATA[交易未达到所需确认数，请稍后再试。所需确认数为 ]]></item>
+				<item id="pay_lang_s14"><![CDATA[成功提交充值请求，当确认到账后，系统将自动冲入积分]]></item>
+				<item id="pay_lang_s15"><![CDATA[提交充值请求失败，请稍后再试]]></item>
+				<item id="pay_lang_s16"><![CDATA[提现操作失败]]></item>
+				<item id="pay_lang_s17"><![CDATA[提现操作失败，积分已经退回，订单号：]]></item>
 			</item>
 			<item id="templatelang">
 				<item id="pay_lang_1"><![CDATA[说明]]></item>
@@ -156,10 +169,11 @@
 				<item id="pay_lang_9"><![CDATA[所需]]></item>
 				<item id="pay_lang_10"><![CDATA[我要提币]]></item>
 				<item id="pay_lang_11"><![CDATA[BBSCoin 提币，站点钱包内 BBSCoin 不够时可能会失败。交易手续费由您支付。积分/BBSCoin兑换比例为 1：]]></item>
-				<item id="pay_lang_12"><![CDATA[请先将BBSCoin打入下述钱包地址，然后将交易ID (TransactionHash) 填写后，再点击充值]]></item>
+				<item id="pay_lang_12"><![CDATA[请先将BBSCoin打入下述钱包地址，付款时要填写下面的 Payment ID。然后将交易ID (Transaction Hash) 填写后，再点击充值]]></item>
 				<item id="pay_lang_13"><![CDATA[交易ID]]></item>
 				<item id="pay_lang_14"><![CDATA[提现钱包地址]]></item>
 				<item id="pay_lang_15"><![CDATA[什么是BBSCoin积分？<a href="https://docs.bbscoin.xyz" target="_blank">查看文档</a>]]></item>
+				<item id="pay_lang_16"><![CDATA[Payment ID]]></item>
 			</item>
 		</item>
 		<item id="installfile"><![CDATA[install.php]]></item>

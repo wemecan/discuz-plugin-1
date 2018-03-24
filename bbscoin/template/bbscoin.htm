@@ -31,6 +31,15 @@
 						</td>
 					</tr>
 					<tr id="paybox">
+						<th>{lang bbscoin:pay_lang_16}</th>
+						<td class="pns">
+							<input type="text" size="100" class="px" style="width: auto;" id="paymentId" name="paymentId" value="" />
+						</td>
+						<td  class="d">
+							
+						</td>
+					</tr>
+					<tr id="paybox">
 						<th>{lang bbscoin:pay_lang_13}</th>
 						<td class="pns">
 							<input type="text" size="100" class="px" style="width: auto;" id="transactionhash" name="transactionhash" value="" />
@@ -95,6 +104,16 @@
 
 		<span style="display: none" id="return_addfundsform"></span>
 <script type="text/javascript">
+function random_paymentid(len) {
+    len = len || 64;
+    var xchars = 'ABCDEF0123456789'; 
+    var maxPos = xchars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+        pwd += xchars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+}
 function addcalcredit() {
 var addfundamount = $('addfundamount').value.replace(/^0/, '');
 var addfundamount = parseInt(addfundamount);
@@ -106,7 +125,7 @@ var addcoinamount = $('addcoinamount').value.replace(/^0/, '');
 var addcoinamount = parseInt(addcoinamount);
 $('coin_desamount').innerHTML = !isNaN(addcoinamount) ? Math.ceil(((addcoinamount / <!--{$config[pay_to_coin_ratio]}-->) * 100)) / 100 : 0;
 }
-
+$("paymentId").value = random_paymentid(64);
 </script>
 
 	</div>
