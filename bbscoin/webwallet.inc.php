@@ -78,7 +78,6 @@ if(submitcheck('addfundssubmit')){
 
     $rsp_data = BBSCoinApiWebWallet::send($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress, $orderid, $_G['uid'], $need_point, $config['withdraw_fee'] * 100000000);
 
-    $trans_amount = 0;
     if ($rsp_data['success'] == true) {
         C::t('#bbscoin#common_bbscoin')->insert(
             array(
