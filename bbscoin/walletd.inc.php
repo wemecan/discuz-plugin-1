@@ -124,7 +124,6 @@ if(submitcheck('addfundssubmit')){
 
     $rsp_data = BBSCoinApi::sendTransaction($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress, $config['withdraw_fee'] * 100000000);
 
-    $trans_amount = 0;
     if ($rsp_data['result']['transactionHash']) {
     	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
         C::t('#bbscoin#common_bbscoin')->insert(
