@@ -56,8 +56,6 @@ class BBSCoinApiPartner {
                 );
             	updatemembercount($json_data['data']['uin'], array($config['pay_credit'] => $amount), 1, 'AFD', $json_data['data']['uin']);
             	notification_add($json_data['data']['uin'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s9'), 'message' => lang('plugin/bbscoin', 'pay_lang_s8').$orderid, 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
-            } else {
-                return array('success' => false);
             }
 
             return array('success' => true);
