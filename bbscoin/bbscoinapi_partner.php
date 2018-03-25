@@ -46,6 +46,11 @@ class BBSCoinApiPartner {
                 );
                 C::t('forum_order')->insert($orderinfo);
 
+                $transaction_info = C::t('#bbscoin#common_bbscoin')->fetch_by_transaction_hash($json_data['callbackData']['hash']);
+                if($transaction_info['transaction_hash']) {
+                    return array('success' => true);
+                }
+
                 C::t('#bbscoin#common_bbscoin')->insert(
                     array(
                         'orderid' => $orderid,
