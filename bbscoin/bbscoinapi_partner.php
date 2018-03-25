@@ -62,7 +62,7 @@ class BBSCoinApiPartner {
 
             return array('success' => true);
         } elseif ($json_data['data']['action'] == 'withdraw') {
-            if ($json_data['callbackData']['height'] == 0) {
+            if ($json_data['callbackData']['status'] != 'normal') {
             	updatemembercount($json_data['data']['uin'], array($config['pay_credit'] => $json_data['data']['points']), 1, 'AFD', $json_data['data']['uin']);
             	notification_add($json_data['data']['uin'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s16'), 'message' => lang('plugin/bbscoin', 'pay_lang_s17').$json_data['data']['orderid'], 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
             } else {
