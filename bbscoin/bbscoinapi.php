@@ -150,7 +150,7 @@ class BBSCoinApiWebWallet {
     // Online Wallet callback
     public static function recvCallback() {
         if ($_GET['sign'] && $_GET['ts']) {
-
+            header('Content-type: application/json');
             if (time() - $_GET['ts'] > 300 || $_GET['ts'] - time() > 300) {
                 echo json_encode(array(
                     'success' => false,
