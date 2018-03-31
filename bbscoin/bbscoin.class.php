@@ -1,11 +1,11 @@
 <?php
 if(!defined('IN_DISCUZ')) {
-	exit('Access Denied');
+    exit('Access Denied');
 }
 
 class plugin_bbscoin {
-	function common() {
-		global $_G;
+    function common() {
+        global $_G;
 
         if (!isset($_G['cache']['plugin']['bbscoin'])) {
             loadcache('plugin');
