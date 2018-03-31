@@ -169,11 +169,11 @@
 				<item id="pay_lang_9"><![CDATA[所需]]></item>
 				<item id="pay_lang_10"><![CDATA[我要提币]]></item>
 				<item id="pay_lang_11"><![CDATA[BBSCoin 提币，站点钱包内 BBSCoin 不够时可能会失败。交易手续费由您支付。积分/BBSCoin兑换比例为 1：]]></item>
-				<item id="pay_lang_12"><![CDATA[请先将BBSCoin打入下述钱包地址，付款时要填写下面的 Payment ID。然后将交易ID (Transaction Hash) 填写后，再点击充值]]></item>
-				<item id="pay_lang_13"><![CDATA[交易ID]]></item>
+				<item id="pay_lang_12"><![CDATA[请先将BBSCoin打入下述钱包地址，付款时要填写下面的 支付ID（Payment ID）。然后将交易哈希 (Transaction Hash) 填写后，再点击充值]]></item>
+				<item id="pay_lang_13"><![CDATA[交易哈希]]></item>
 				<item id="pay_lang_14"><![CDATA[提现钱包地址]]></item>
 				<item id="pay_lang_15"><![CDATA[什么是BBSCoin积分？<a href="https://docs.bbscoin.xyz" target="_blank">查看文档</a>]]></item>
-				<item id="pay_lang_16"><![CDATA[Payment ID]]></item>
+				<item id="pay_lang_16"><![CDATA[支付ID]]></item>
 			</item>
 		</item>
 		<item id="installfile"><![CDATA[install.php]]></item>

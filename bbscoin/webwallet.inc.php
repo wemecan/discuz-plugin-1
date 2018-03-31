@@ -26,7 +26,7 @@ if(submitcheck('addfundssubmit')){
     }
 
     // online wallet
-    $rsp_data = BBSCoinApiWebWallet::check_transaction($config['bbscoin_walletd'], $transaction_hash, $paymentId);
+    $rsp_data = BBSCoinApiWebWallet::check_transaction($config['bbscoin_walletd'], $transaction_hash, $paymentId, $_G['uid']);
     discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     if ($rsp_data['success']) {
         showmessage(lang('plugin/bbscoin', 'pay_lang_s14'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));

@@ -213,7 +213,7 @@ class BBSCoinApiWebWallet {
     }
 
     // check_transaction
-    public static function check_transaction($walletd, $transaction_hash, $paymentId) {
+    public static function check_transaction($walletd, $transaction_hash, $paymentId, $uin) {
         $req_data = array(
           'params' => array(
           	'hash' => $transaction_hash,
