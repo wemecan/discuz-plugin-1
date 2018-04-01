@@ -10,7 +10,7 @@ if(!$_G['uid']) {
 //提交表单
 if(submitcheck('addfundssubmit')){
 
-    $orderid = dgmdate(TIMESTAMP, 'YmdHis').random(3);
+    $orderid = date('YmdHis').base_convert($_G['uid'], 10, 36);
     $transaction_hash = trim($_POST['transactionhash']);
     $paymentId = trim($_POST['paymentId']);
 
@@ -110,7 +110,7 @@ if(submitcheck('addfundssubmit')){
         showmessage(lang('plugin/bbscoin', 'pay_lang_s10'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    $orderid = dgmdate(TIMESTAMP, 'YmdHis').random(3);
+    $orderid = date('YmdHis').base_convert($_G['uid'], 10, 36);
 
     $orderinfo = array(
     	'orderid' => $orderid,

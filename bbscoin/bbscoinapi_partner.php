@@ -34,7 +34,7 @@ class BBSCoinApiPartner {
                 $trans_amount = $json_data['callbackData']['amount'] / 100000000;
                 $amount = $trans_amount * $config['pay_ratio'];
 
-                $orderid = dgmdate(TIMESTAMP, 'YmdHis').random(3);
+                $orderid = date('YmdHis').base_convert($json_data['data']['uin'], 10, 36);
                 $orderinfo = array(
                 	'orderid' => $orderid,
                 	'status' => '2',
@@ -66,6 +66,21 @@ class BBSCoinApiPartner {
             return array('success' => true);
         } elseif ($json_data['data']['action'] == 'withdraw') {
             if ($json_data['callbackData']['status'] != 'normal') {
+
+                $transaction_info = C::t('#bbscoin#common_bbscoin')->fetch($json_data['data']['orderid'].'_R');
+                if($transaction_info['orderid']) {
+                    return array('success' => true);
+                }
+
+                C::t('#bbscoin#common_bbscoin')->insert(
+                    array(
+                        'orderid' => $json_data['data']['orderid'].'_R',
+                        'transaction_hash' => $json_data['data']['orderid'].'_R',
+                        'address' => '',
+                        'dateline' => $_G['timestamp'],
+                    )
+                );
+
             	updatemembercount($json_data['data']['uin'], array($config['pay_credit'] => $json_data['data']['points']), 1, 'AFD', $json_data['data']['uin']);
             	notification_add($json_data['data']['uin'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s16'), 'message' => lang('plugin/bbscoin', 'pay_lang_s17').$json_data['data']['orderid'], 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
             } else {
