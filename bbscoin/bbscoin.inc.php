@@ -14,10 +14,7 @@ if (!$config['bbscoin_wallet_address']) {
     showmessage(lang('plugin/bbscoin', 'pay_lang_s11'));
 }
 
-
 if ($config['bbscoin_siteid'] && $config['bbscoin_sitekey']) {
-    BBSCoinApiWebWallet::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey']);
-    BBSCoinApiWebWallet::recvCallback();
     require_once DISCUZ_ROOT.'./source/plugin/bbscoin/webwallet.inc.php';
 } else {
     require_once DISCUZ_ROOT.'./source/plugin/bbscoin/walletd.inc.php';
