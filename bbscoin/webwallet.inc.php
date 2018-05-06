@@ -7,6 +7,8 @@ if(!$_G['uid']) {
 	showmessage('not_loggedin', NULL, array(), array('login' => 1));
 }
 
+BBSCoinApiWebWallet::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey']);
+
 //提交表单
 if(submitcheck('addfundssubmit')){
 
