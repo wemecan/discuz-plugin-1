@@ -121,7 +121,7 @@ if(submitcheck('addfundssubmit')){
     try {
         $rsp_data = BBSCoinApiWebWallet::send($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress, $orderid, $_G['uid'], $need_point, $config['withdraw_fee'], false);
     } catch (Exception $e) {
-        updatemembercount($_G['uid'], array($config['pay_credit'] => $need_point), 1, 'AFD', $_G['uid']);
+        //updatemembercount($_G['uid'], array($config['pay_credit'] => $need_point), 1, 'AFD', $_G['uid']);
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     	showmessage('Error '.$e->getCode().','.$e->getMessage(), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
