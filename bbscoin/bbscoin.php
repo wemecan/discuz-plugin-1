@@ -20,6 +20,6 @@ $config = $_G['cache']['plugin']['bbscoin'];
 require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi.php';
 require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi_partner.php';
 
-BBSCoinApiWebWallet::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey']);
+BBSCoinApiWebWallet::setSiteInfo($config['bbscoin_siteid'], $config['bbscoin_sitekey'], $config['bbscoin_nosecure']);
 BBSCoinApiWebWallet::recvCallback();
 

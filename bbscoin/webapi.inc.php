@@ -27,19 +27,51 @@ if(submitcheck('addfundssubmit')){
     	showmessage(lang('plugin/bbscoin', 'pay_lang_s3'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    // online wallet
     try {
-        $rsp_data = BBSCoinApiWebWallet::checkTransaction($config['bbscoin_walletd'], $transaction_hash, $paymentId, $_G['uid']);
+        $rsp_data = BBSCoinApiWebWallet::getTransactionDetails($config['bbscoin_walletd'], $transaction_hash);
     } catch (Exception $e) {
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     	showmessage('Error '.$e->getCode().','.$e->getMessage(), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-    if ($rsp_data['success']) {
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s14'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+    if ($rsp_data['data']['confirmations'] <= $config['confirmed_blocks']) {
+        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
+    	showmessage(lang('plugin/bbscoin', 'pay_lang_s13').$config['confirmed_blocks'], '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+    }
+
+    $trans_amount = $rsp_data['data']['amount'];
+
+    $amount = $trans_amount * $config['pay_ratio'];
+
+    $orderinfo = array(
+    	'orderid' => $orderid,
+    	'status' => '1',
+    	'uid' => $_G['uid'],
+    	'amount' => $amount,
+    	'price' => $trans_amount,
+    	'submitdate' => $_G['timestamp'],
+    );
+    C::t('forum_order')->insert($orderinfo);
+
+    if (strtolower($rsp_data['data']['paymentId']) == strtolower($paymentId)) {
+    	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
+        C::t('#bbscoin#common_bbscoin')->insert(
+            array(
+                'orderid' => $orderid,
+                'transaction_hash' => $transaction_hash,
+                'address' => '',
+                'dateline' => $_G['timestamp'],
+            )
+        );
+    	updatemembercount($_G['uid'], array($config['pay_credit'] => $amount), 1, 'AFD', $_G['uid']);
+
+    	notification_add($_G['uid'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s9'), 'message' => lang('plugin/bbscoin', 'pay_lang_s8').$orderid, 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
+
+        echo  "<script language=\"javascript\" type=\"text/javascript\">window.location.href='".$_G['siteurl']."forum.php?mod=misc&action=paysucceed'</script>";
+        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     } else {
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s15').' '.$rsp_data['message'], '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
+        showmessage(lang('plugin/bbscoin', 'pay_lang_s2'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
     exit();
@@ -85,30 +117,31 @@ if(submitcheck('addfundssubmit')){
     C::t('forum_order')->insert($orderinfo);
 
     try {
-        $rsp_data = BBSCoinApiWebWallet::send($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress, $orderid, $_G['uid'], $need_point, $config['withdraw_fee']);
+        $rsp_data = BBSCoinApiWebWallet::send($config['bbscoin_walletd'], $config['bbscoin_wallet_address'], $real_price, $walletaddress, $orderid, $_G['uid'], $need_point, $config['withdraw_fee'], false);
     } catch (Exception $e) {
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     	showmessage('Error '.$e->getCode().','.$e->getMessage(), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    if ($rsp_data['success'] == true) {
+    if ($rsp_data['data']['hash']) {
+    	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
         C::t('#bbscoin#common_bbscoin')->insert(
             array(
                 'orderid' => $orderid,
-                'transaction_hash' => $rsp_data['result']['transactionHash'],
+                'transaction_hash' => $rsp_data['data']['hash'],
                 'address' => $walletaddress,
                 'dateline' => $_G['timestamp'],
             )
         );
     	updatemembercount($_G['uid'], array($config['pay_credit'] => -$need_point), 1, 'AFD', $_G['uid']);
 
-    	notification_add($_G['uid'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s7'), 'message' => lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['result']['transactionHash'], 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
+    	notification_add($_G['uid'], 'system', 'system_notice', array('subject' => lang('plugin/bbscoin', 'pay_lang_s7'), 'message' => lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['data']['hash'], 'from_id' => 0, 'from_idtype' => 'sendnotice'), 1);
 
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['result']['transactionHash'], '', array(), array('alert' => 'right', 'showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+        showmessage(lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['data']['hash'], '', array(), array('alert' => 'right', 'showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     } else {
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
-        showmessage(lang('plugin/bbscoin', 'pay_lang_s5').' '.$rsp_data['message'], '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+        showmessage(lang('plugin/bbscoin', 'pay_lang_s5'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
     exit();

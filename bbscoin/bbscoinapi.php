@@ -101,20 +101,30 @@ class BBSCoinApiWebWallet {
 
     private static $online_api_site_id  = '';
     private static $online_api_site_key = '';
+    private static $timeout  = 30;
+    private static $connectTimeout = 3;
+    private static $noSecure = false;
 
     // Set Site Info
-    public static function setSiteInfo($site_id, $site_key) {
+    public static function setSiteInfo($site_id, $site_key, $noSecure = false) {
         self::$online_api_site_id = $site_id;
         self::$online_api_site_key = $site_key;
+        self::$noSecure = $noSecure;
     }
 
     // Send Request
-    public static function getUrlContent($url, $data_string) {
+    public static function getUrlContent($url, $data) {
         $ch = curl_init();
+
+        if ($data) {
+            $data_string = json_encode($data);
+        } else {
+            $data_string = '';
+        }
 
         if (self::$online_api_site_id && self::$online_api_site_key) {
             $sign = self::sign($data_string);
-            $url_suff = 'site_id='.self::$online_api_site_id.'&sign='.$sign['sign'].'&ts='.$sign['ts'];
+            $url_suff = 'appid='.self::$online_api_site_id.'&sign='.$sign['sign'].'&ts='.$sign['ts'];
             if (strpos($url, '?') === false) {
                 $url .= '?'.$url_suff;
             } else {
@@ -123,22 +133,39 @@ class BBSCoinApiWebWallet {
         }
 
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'BBSCoin');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'BBSCoin PHP Client/1.0');
         curl_setopt($ch, CURLOPT_POST, true);
+        if (self::$noSecure) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+        ));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::$connectTimeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
         $data = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch)) {
+            throw new Exception('curl error, code='.curl_errno($ch).', msg='.curl_error($ch));
+        }
+        
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $data;
+
+        $resp_data = json_decode($data, true);
+        if (!$resp_data) {
+            throw new Exception('empty response data, code='.$http_code);
+        }
+
+        return $resp_data;
     }
 
     // Generate Sign
     public static function sign($data_string, $ts = 0) {
         if (!$ts) {
-            $ts = time();
+            $ts = time().'000';
         }
         $sign = hash_hmac('sha256', $data_string.$ts, self::$online_api_site_key);
         return array(
@@ -182,51 +209,54 @@ class BBSCoinApiWebWallet {
         }
     }
 
+    public static function getTransactionDetails($walletd, $hash) {
+        return self::getUrlContent($walletd.'/wallet/transaction-details', array(
+                'hash' => (string)$hash,
+            )
+        );
+    }
+
     // send
-    public static function send($walletd, $address, $real_price, $sendto, $orderid, $uin, $points, $fee = 50000000) {
+    public static function send($walletd, $address, $real_price, $sendto, $orderid, $uin, $points, $fee = 1, $webhook = true) {
         $req_data = array(
-          'params' => array(
-              'minxin' => 0,
-              'fee' => $fee,
-              'address' => $address,
-              "transfers" => array(
-               0 => array(
-                    'amount' => $real_price,
-                    'address' => $sendto,
-                )
-              )
-          ),
-          'webhook' => array(
-            'data' => array(
-                'action' => 'withdraw',
-                'orderid' => $orderid,
-                'uin' => $uin,
-                'points' => $points,
+          'mixin' => 0,
+          'fee' => (string)$fee,
+          'paymentId' => '',
+          "transfers" => array(
+           0 => array(
+                'amount' => (string)$real_price,
+                'address' => (string)$sendto,
             )
           )
-        );
+       );
+       if ($webhook) {
+            $req_data['webhook'] = array(
+                'data' => array(
+                    'action' => 'withdraw',
+                    'orderid' => $orderid,
+                    'uin' => $uin,
+                    'points' => $points,
+                )
+            );
+        }
 
-        $result = self::getUrlContent($walletd.'/api/wallet/send', json_encode($req_data)); 
-        $rsp_data = json_decode($result, true);
+        $rsp_data = self::getUrlContent($walletd.'/wallet/send', $req_data); 
         
         return $rsp_data;
     }
 
     // check_transaction
-    public static function check_transaction($walletd, $transaction_hash, $paymentId, $uin) {
+    public static function checkTransaction($walletd, $transaction_hash, $paymentId, $uin) {
         $req_data = array(
-          'params' => array(
-          	'hash' => $transaction_hash,
-          	'paymentId' => $paymentId,
-          ),
-          'data' => array(
-            'action' => 'deposit',
-            'uin' => $uin,
-          )
+            'hash' => $transaction_hash,
+            'paymentId' => $paymentId,
+            'data' => array(
+                'action' => 'deposit',
+                'uin' => $uin,
+            )
         );
 
-        $result = self::getUrlContent($walletd.'/api/webhook/create', json_encode($req_data)); 
-        $rsp_data = json_decode($result, true);
+        $rsp_data = self::getUrlContent($walletd.'/webhook/create', $req_data); 
 
         return $rsp_data;
     }

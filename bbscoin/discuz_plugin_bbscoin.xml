@@ -47,7 +47,7 @@
 		<item id="version"><![CDATA[X2.5,X3,X3.1,X3.2,X3.3,X3.4,F1.0,L1.0]]></item>
 		<item id="var">
 			<item id="0">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[1]]></item>
 				<item id="title"><![CDATA[交易积分]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[pay_credit]]></item>
@@ -56,7 +56,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="1">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[10]]></item>
 				<item id="title"><![CDATA[BBSCoin/积分兑换比率]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[pay_ratio]]></item>
@@ -65,7 +65,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="2">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[20]]></item>
 				<item id="title"><![CDATA[是否允许积分换BBSCoin]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[pay_to_bbscoin]]></item>
@@ -74,7 +74,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="3">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[30]]></item>
 				<item id="title"><![CDATA[积分/BBSCoin兑换比率]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[pay_to_coin_ratio]]></item>
@@ -83,7 +83,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="4">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[40]]></item>
 				<item id="title"><![CDATA[站长钱包地址]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[bbscoin_wallet_address]]></item>
@@ -92,16 +92,16 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="5">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[50]]></item>
 				<item id="title"><![CDATA[Walletd或在线钱包服务地址]]></item>
-				<item id="description"><![CDATA[]]></item>
+				<item id="description"><![CDATA[在线钱包请填写 https://api.bbs.money]]></item>
 				<item id="variable"><![CDATA[bbscoin_walletd]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[http://127.0.0.1:8070/json_rpc]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="6">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[60]]></item>
 				<item id="title"><![CDATA[充值所需区块确认数]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[confirmed_blocks]]></item>
@@ -110,7 +110,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="7">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[70]]></item>
 				<item id="title"><![CDATA[在线钱包站点ID(使用在线钱包时填写)]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[bbscoin_siteid]]></item>
@@ -119,7 +119,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="8">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[80]]></item>
 				<item id="title"><![CDATA[在线钱包站点Key(使用在线钱包时填写)]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[bbscoin_sitekey]]></item>
@@ -128,12 +128,32 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="9">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[90]]></item>
 				<item id="title"><![CDATA[提现手续费(单位：BBS)]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[withdraw_fee]]></item>
 				<item id="type"><![CDATA[number]]></item>
 				<item id="value"><![CDATA[1]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="10">
+				<item id="displayorder"><![CDATA[100]]></item>
+				<item id="title"><![CDATA[请求模式]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[bbscoin_apimode]]></item>
+				<item id="type"><![CDATA[select]]></item>
+				<item id="value"><![CDATA[]]></item>
+				<item id="extra"><![CDATA[0=本地Walletd
+1=在线钱包主动请求
+2=在线钱包回调请求]]></item>
+			</item>
+			<item id="11">
+				<item id="displayorder"><![CDATA[110]]></item>
+				<item id="title"><![CDATA[在线钱包禁用HTTPS]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[bbscoin_nosecure]]></item>
+				<item id="type"><![CDATA[radio]]></item>
+				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
