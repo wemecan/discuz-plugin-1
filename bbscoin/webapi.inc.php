@@ -34,7 +34,7 @@ if(submitcheck('addfundssubmit')){
     	showmessage('Error '.$e->getCode().','.$e->getMessage(), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
-    if ($rsp_data['data']['confirmations'] <= $config['confirmed_blocks']) {
+    if ($rsp_data['data']['status'] != 'normal' || $rsp_data['data']['confirmations'] <= $config['confirmed_blocks']) {
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
     	showmessage(lang('plugin/bbscoin', 'pay_lang_s13').$config['confirmed_blocks'], '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
