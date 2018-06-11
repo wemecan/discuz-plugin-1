@@ -142,6 +142,7 @@ if(submitcheck('addfundssubmit')){
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
         showmessage(lang('plugin/bbscoin', 'pay_lang_s6').$orderid.', '.$rsp_data['data']['hash'], '', array(), array('alert' => 'right', 'showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     } else {
+        C::t('forum_order')->update($orderid, array('status' => '3', 'confirmdate' => $_G['timestamp']));
         updatemembercount($_G['uid'], array($config['pay_credit'] => $need_point), 1, 'AFD', $_G['uid']);
         discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
         showmessage(lang('plugin/bbscoin', 'pay_lang_s5'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
