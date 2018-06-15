@@ -31,7 +31,7 @@ class BBSCoinApiPartner {
 
         if ($json_data['data']['action'] == 'deposit') {
             if ($json_data['callbackData']['amount'] > 0) {
-                $trans_amount = $json_data['callbackData']['amount'] / 100000000;
+                $trans_amount = $json_data['callbackData']['amount'];
                 $amount = $trans_amount * $config['pay_ratio'];
 
                 $orderid = date('YmdHis').base_convert($json_data['data']['uin'], 10, 36);
