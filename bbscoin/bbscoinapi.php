@@ -137,6 +137,8 @@ class BBSCoinApiWebWallet {
         curl_setopt($ch, CURLOPT_POST, true);
         if (self::$noSecure) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+            curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
