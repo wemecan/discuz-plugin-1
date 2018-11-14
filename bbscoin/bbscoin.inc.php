@@ -14,6 +14,8 @@ if (!$config['bbscoin_wallet_address']) {
     showmessage(lang('plugin/bbscoin', 'pay_lang_s11'));
 }
 
+$_G['bbscoin_paymentid'] = hash('sha256', $_G['setting']['siteuniqueid'].$_G['uid']);
+
 if ($config['bbscoin_apimode'] == 1) {
     require_once DISCUZ_ROOT.'./source/plugin/bbscoin/webapi.inc.php';
 } elseif ($config['bbscoin_apimode'] == 2) {

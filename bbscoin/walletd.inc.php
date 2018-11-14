@@ -59,7 +59,7 @@ if(submitcheck('addfundssubmit')){
     );
     C::t('forum_order')->insert($orderinfo);
 
-    if (strtolower($rsp_data['result']['transaction']['paymentId']) == strtolower($paymentId)) {
+    if ($paymentId == $_G['bbscoin_paymentid'] && strtolower($rsp_data['result']['transaction']['paymentId']) == strtolower($paymentId)) {
     	C::t('forum_order')->update($orderid, array('status' => '2', 'confirmdate' => $_G['timestamp']));
         C::t('#bbscoin#common_bbscoin')->insert(
             array(

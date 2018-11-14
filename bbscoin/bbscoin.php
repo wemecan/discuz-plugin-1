@@ -17,6 +17,8 @@ if (!isset($_G['cache']['plugin']['bbscoin'])) {
 }
 $config = $_G['cache']['plugin']['bbscoin'];
 
+$_G['bbscoin_paymentid'] = hash('sha256', $_G['setting']['siteuniqueid'].$_G['uid']);
+
 require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi.php';
 require_once DISCUZ_ROOT.'./source/plugin/bbscoin/bbscoinapi_partner.php';
 

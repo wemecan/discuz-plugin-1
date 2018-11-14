@@ -27,6 +27,11 @@ if(submitcheck('addfundssubmit')){
     	showmessage(lang('plugin/bbscoin', 'pay_lang_s3'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
     }
 
+    if ($paymentId != $_G['bbscoin_paymentid']) {
+        discuz_process::unlock('pay_bbscoin_'.$_G['uid']);
+        showmessage(lang('plugin/bbscoin', 'pay_lang_s2'), '', array(), array('showdialog' => 1, 'showmsg' => true, 'closetime' => true));
+    }
+
     // online wallet
     try {
         $rsp_data = BBSCoinApiWebWallet::checkTransaction($config['bbscoin_walletd'], $transaction_hash, $paymentId, $_G['uid']);

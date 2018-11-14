@@ -33,7 +33,7 @@
 					<tr id="paybox">
 						<th>{lang bbscoin:pay_lang_16}</th>
 						<td class="pns">
-							<input type="text" size="100" class="px" style="width: auto;" id="paymentId" name="paymentId" value="" />
+							<input type="text" size="100" class="px" style="width: auto;" readonly="readonly" id="paymentId" name="paymentId" value="{$_G['bbscoin_paymentid']}" />
 						</td>
 						<td  class="d">
 							
@@ -125,7 +125,6 @@ var addcoinamount = $('addcoinamount').value.replace(/^0/, '');
 var addcoinamount = parseInt(addcoinamount);
 $('coin_desamount').innerHTML = !isNaN(addcoinamount) ? Math.ceil(((addcoinamount / <!--{$config[pay_to_coin_ratio]}-->) * 100)) / 100 : 0;
 }
-$("paymentId").value = random_paymentid(64);
 </script>
 
 	</div>
